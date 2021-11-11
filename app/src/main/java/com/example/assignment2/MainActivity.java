@@ -1,8 +1,11 @@
 package com.example.assignment2;
 
 import android.app.ActionBar.LayoutParams;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.icu.text.CaseMap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +32,7 @@ import com.example.assignment2.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-
-
-    @Override
+     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -51,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        SharedPreferences sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+         if (!sharedPreferences.contains("restTime")){
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.putInt("restTime", 6);
+            myEdit.apply();
+        }
     }
 
 
