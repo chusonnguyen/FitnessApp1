@@ -1,7 +1,9 @@
 package com.example.assignment2.ui.home;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.os.CountDownTimer;
@@ -23,12 +26,17 @@ import android.widget.TextView;
 
 import com.example.assignment2.MainActivity;
 import com.example.assignment2.R;
+import com.example.assignment2.database.DataSample;
+import com.example.assignment2.database.Exercises;
 import com.example.assignment2.databinding.FragmentExerciseBinding;
 import com.example.assignment2.databinding.FragmentTimePickerBinding;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -52,18 +60,22 @@ public class ExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentExerciseBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        long currentTime = System.currentTimeMillis();
+        exerciseType = ExerciseFragmentArgs.fromBundle(getArguments()).getExerciseType();
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.push_ups);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-        byte[] img = bos.toByteArray();
-
-        Bitmap b1 = BitmapFactory.decodeByteArray(img, 0, img.length);
-        binding.imageView.setImageBitmap(b1);
+        ExerciseViewModel exerciseViewModel = new  ViewModelProvider(this).get(ExerciseViewModel.class);
+        exerciseViewModel.setmAllExercises(exerciseType);
+        exerciseViewModel.getCurrentExericise().observe(getViewLifecycleOwner(), exercises -> {
+            Log.e("imageFile", exercises.getImage());
+            ContextWrapper cw = new ContextWrapper(getContext());
+            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+            File file = new File(directory, exercises.getImage());
+            binding.imageView.setImageDrawable(Drawable.createFromPath(file.toString()));
+            binding.exerciseName.setText(exercises.getName());
+        });
 
 
         SharedPreferences sh = getActivity().getPreferences(Context.MODE_PRIVATE);
-        exerciseType = ExerciseFragmentArgs.fromBundle(getArguments()).getExerciseType();
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(exerciseType);
         duration = ExerciseFragmentArgs.fromBundle(getArguments()).getDuration();
 
@@ -104,8 +116,13 @@ public class ExerciseFragment extends Fragment {
                 exerciseProgressBar.setProgress(progressPercentage);
             }
             public void onFinish() {
-                @SuppressLint("UseCompatLoadingForDrawables") Drawable draw = requireActivity().getResources().getDrawable(R.drawable.circular_progress_bar_orange);
-                exerciseProgressBar.setProgressDrawable(draw);
+                Activity activity = getActivity();
+                if(activity != null && isAdded()){
+                    @SuppressLint("UseCompatLoadingForDrawables") Drawable draw = getContext().getResources().getDrawable(R.drawable.circular_progress_bar_orange);
+                    exerciseProgressBar.setProgressDrawable(draw);
+
+                }
+                exerciseViewModel.nextExercise();
                 restTime.start();
             }
         };
@@ -119,8 +136,12 @@ public class ExerciseFragment extends Fragment {
                 exerciseProgressBar.setProgress(secondRemaining * 20);
             }
             public void onFinish() {
-                @SuppressLint("UseCompatLoadingForDrawables") Drawable draw = requireActivity().getResources().getDrawable(R.drawable.circular_progress_bar);
-                exerciseProgressBar.setProgressDrawable(draw);
+                Activity activity = getActivity();
+                if(activity != null && isAdded()){
+                    @SuppressLint("UseCompatLoadingForDrawables") Drawable draw = getContext().getResources().getDrawable(R.drawable.circular_progress_bar);
+                    exerciseProgressBar.setProgressDrawable(draw);
+
+                }
                 if (exerciseStart == false){
                     exerciseStart = true;
                     Timer.start();
@@ -132,6 +153,7 @@ public class ExerciseFragment extends Fragment {
         binding.nextExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                exerciseViewModel.nextExercise();
                 resetProgressBar();
             }
         });
@@ -139,6 +161,7 @@ public class ExerciseFragment extends Fragment {
         binding.previousExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                exerciseViewModel.previousExercise();
                 resetProgressBar();
             }
         });
@@ -146,8 +169,12 @@ public class ExerciseFragment extends Fragment {
     }
 
     void resetProgressBar(){
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable draw = requireActivity().getResources().getDrawable(R.drawable.circular_progress_bar_orange);
-        exerciseProgressBar.setProgressDrawable(draw);
+        Activity activity = getActivity();
+        if(activity != null && isAdded()){
+            @SuppressLint("UseCompatLoadingForDrawables") Drawable draw = getContext().getResources().getDrawable(R.drawable.circular_progress_bar_orange);
+            exerciseProgressBar.setProgressDrawable(draw);
+
+        }
         exerciseProgressBar.setProgress(100);
         restTime.cancel();
         exerciseCountdown.cancel();

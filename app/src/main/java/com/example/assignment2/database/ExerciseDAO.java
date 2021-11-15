@@ -20,6 +20,6 @@ public interface ExerciseDAO {
     @Query("SELECT * FROM exercise_table WHERE type LIKE :mType ORDER BY name ASC")
     List<Exercises> getAllExerciseFromType(String mType);
 
-    @Query("SELECT type FROM exercise_table")
+    @Query("SELECT DISTINCT type FROM exercise_table")
     List<String> getAllTypes();
 }

@@ -15,15 +15,14 @@ public class Exercises {
     @ColumnInfo(name = "name")
     private String mName;
 
-    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
-    private byte[] image;
+    private String image;
 
 
     @NonNull
     @ColumnInfo(name = "type")
     private String mType;
 
-    public Exercises(@NonNull String mName, byte[] image, @NonNull String mType) {
+    public Exercises(@NonNull String mName, String image, @NonNull String mType) {
         this.mName = mName;
         this.image = image;
         this.mType = mType;
@@ -46,11 +45,11 @@ public class Exercises {
         this.mName = mName;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

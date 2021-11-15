@@ -19,33 +19,47 @@ public class ExerciseViewModel extends AndroidViewModel {
     private ExerciseRepository exerciseRepository;
     private final List<String> mAllType;
     private List<Exercises> mAllExercises;
-    private MutableLiveData<String> test;
+    private MutableLiveData<Exercises> currentExericise;
+    private Integer position ;
 
     public ExerciseViewModel(Application application) {
         super(application);
         exerciseRepository = new ExerciseRepository(application);
         mAllType = exerciseRepository.getmAllType();
-        Log.e("viewModelConstruc", "hello");
+        position = 0;
     }
 
     public void setmAllExercises(String type) {
         this.mAllExercises = exerciseRepository.getmAllExercise(type);
+        updateCurrentExercise(position);
+        Log.e("test", ""+this.mAllExercises.size());
     }
 
     List<String> getmAllType(){return mAllType;}
 
-    public MutableLiveData<String> getTest() {
-        if (test == null){
-            test = new MutableLiveData<String>();
+    public MutableLiveData<Exercises> getCurrentExericise() {
+        if (currentExericise == null){
+            currentExericise = new MutableLiveData<Exercises>();
         }
-        return test;
+        return currentExericise;
     }
 
-    public void updateTest(String newTest){
-        this.getTest().postValue(newTest);
+    public void updateCurrentExercise(Integer position){
+        this.getCurrentExericise().postValue(mAllExercises.get(position));
     }
 
+    public void nextExercise (){
+        position++;
+        updateCurrentExercise(position);
+    }
 
-    //public void insert(Exercises exercise) {exerciseRepository.insert(exercise);}
+    public void previousExercise(){
+        if (position != 0){
+            position--;
+            updateCurrentExercise(position);
+        }
+    }
+
+    public void insert(Exercises exercise) {exerciseRepository.insert(exercise);}
 
 }

@@ -1,6 +1,9 @@
 package com.example.assignment2.database;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,8 +13,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.assignment2.R;
+
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,6 +75,7 @@ public abstract class ExerciseRoomDatabase extends RoomDatabase {
         public void onOpen(@NonNull @NotNull SupportSQLiteDatabase db) {
             super.onOpen(db);
             ExerciseDAO dao = INSTANCE.exerciseDAO();
+
             Log.e("databaseOpen", "not here");
         }
     };

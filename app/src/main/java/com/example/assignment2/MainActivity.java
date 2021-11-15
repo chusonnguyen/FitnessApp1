@@ -2,7 +2,11 @@ package com.example.assignment2;
 
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.icu.text.CaseMap;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +17,8 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.assignment2.database.DataSample;
+import com.example.assignment2.database.Exercises;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -28,6 +34,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.assignment2.databinding.ActivityMainBinding;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +68,29 @@ public class MainActivity extends AppCompatActivity {
             myEdit.putInt("restTime", 6);
             myEdit.apply();
         }
+/*
+         for (int pos = 0; pos <= 4; pos++) {
+             long time = System.currentTimeMillis();
+             Log.e("currentTime", ""+time);
+             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), DataSample.imageArr[pos]);
+             ContextWrapper cw = new ContextWrapper(getApplicationContext());
+             File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+             File file = new File(directory, time + ".jpg");
+             if (!file.exists()) {
+                 Log.d("path", file.toString());
+                 FileOutputStream fos = null;
+                 try {
+                     fos = new FileOutputStream(file);
+                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                     fos.flush();
+                     fos.close();
+                 } catch (java.io.IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+         }
+
+ */
     }
 
 
