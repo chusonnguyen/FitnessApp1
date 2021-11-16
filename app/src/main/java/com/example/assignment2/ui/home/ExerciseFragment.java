@@ -134,7 +134,11 @@ public class ExerciseFragment extends Fragment {
                     exerciseProgressBar.setProgressDrawable(draw);
 
                 }
-                exerciseViewModel.nextExercise();
+                if(!exerciseViewModel.nextExercise()){
+                    String exerciseTime = ((exerciseViewModel.getExerciseTime() / 1000) / 60) + " minutes " + ((exerciseViewModel.getExerciseTime() / 1000) % 60) + " second";
+                    ExerciseFragmentDirections.ActionExerciseFragmentToFinishFragment action  = ExerciseFragmentDirections.actionExerciseFragmentToFinishFragment(exerciseTime, exerciseType);
+                    Navigation.findNavController(getView()).navigate(action);
+                };
                 restTime.start();
             }
         };
@@ -165,7 +169,11 @@ public class ExerciseFragment extends Fragment {
         binding.nextExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                exerciseViewModel.nextExercise();
+                if(!exerciseViewModel.nextExercise()){
+                    String exerciseTime = ((exerciseViewModel.getExerciseTime() / 1000) / 60) + " minutes " + ((exerciseViewModel.getExerciseTime() / 1000) % 60) + " second";
+                    ExerciseFragmentDirections.ActionExerciseFragmentToFinishFragment action  = ExerciseFragmentDirections.actionExerciseFragmentToFinishFragment(exerciseTime, exerciseType);
+                    Navigation.findNavController(getView()).navigate(action);
+                };
                 resetProgressBar();
             }
         });
@@ -217,7 +225,9 @@ public class ExerciseFragment extends Fragment {
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), ((exerciseViewModel.getExerciseTime() / 1000) / 60) + " minutes " + ((exerciseViewModel.getExerciseTime() / 1000) % 60) + " second" , Toast.LENGTH_SHORT).show();
+                String exerciseTime = ((exerciseViewModel.getExerciseTime() / 1000) / 60) + " minutes " + ((exerciseViewModel.getExerciseTime() / 1000) % 60) + " second";
+                ExerciseFragmentDirections.ActionExerciseFragmentToFinishFragment action  = ExerciseFragmentDirections.actionExerciseFragmentToFinishFragment(exerciseTime, exerciseType);
+                Navigation.findNavController(getView()).navigate(action);
                 bottomSheetDialog.dismiss();
             }
         });

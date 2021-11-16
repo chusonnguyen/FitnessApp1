@@ -34,7 +34,6 @@ public class ExerciseViewModel extends AndroidViewModel {
     public void setmAllExercises(String type) {
         this.mAllExercises = exerciseRepository.getmAllExercise(type);
         updateCurrentExercise(position);
-        Log.e("test", ""+this.mAllExercises.size());
     }
 
     List<String> getmAllType(){return mAllType;}
@@ -50,9 +49,14 @@ public class ExerciseViewModel extends AndroidViewModel {
         this.getCurrentExericise().postValue(mAllExercises.get(position));
     }
 
-    public void nextExercise (){
+    public boolean nextExercise (){
         position++;
-        updateCurrentExercise(position);
+        if (position == this.mAllExercises.size()){
+            return false;
+        } else {
+            updateCurrentExercise(position);
+            return true;
+        }
     }
 
     public void previousExercise(){
