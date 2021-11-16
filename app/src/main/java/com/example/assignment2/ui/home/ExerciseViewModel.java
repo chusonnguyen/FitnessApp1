@@ -21,12 +21,14 @@ public class ExerciseViewModel extends AndroidViewModel {
     private List<Exercises> mAllExercises;
     private MutableLiveData<Exercises> currentExericise;
     private Integer position ;
+    private Integer exerciseTime;
 
     public ExerciseViewModel(Application application) {
         super(application);
         exerciseRepository = new ExerciseRepository(application);
         mAllType = exerciseRepository.getmAllType();
         position = 0;
+        exerciseTime = 0;
     }
 
     public void setmAllExercises(String type) {
@@ -58,6 +60,14 @@ public class ExerciseViewModel extends AndroidViewModel {
             position--;
             updateCurrentExercise(position);
         }
+    }
+
+    public void increaseExerciseTime(Integer exerciseTime) {
+        this.exerciseTime += 1000;
+    }
+
+    public Integer getExerciseTime() {
+        return exerciseTime;
     }
 
     public void insert(Exercises exercise) {exerciseRepository.insert(exercise);}

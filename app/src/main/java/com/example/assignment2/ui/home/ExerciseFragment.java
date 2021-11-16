@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,11 +19,16 @@ import androidx.navigation.Navigation;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.assignment2.MainActivity;
 import com.example.assignment2.R;
@@ -30,6 +36,7 @@ import com.example.assignment2.database.DataSample;
 import com.example.assignment2.database.Exercises;
 import com.example.assignment2.databinding.FragmentExerciseBinding;
 import com.example.assignment2.databinding.FragmentTimePickerBinding;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +51,7 @@ import java.text.NumberFormat;
 public class ExerciseFragment extends Fragment {
 
     private FragmentExerciseBinding binding;
+    private ExerciseViewModel exerciseViewModel;
     private String exerciseType;
     private Integer duration;
     private ProgressBar progressBar;
@@ -60,10 +68,13 @@ public class ExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentExerciseBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        setHasOptionsMenu(true);
+
         long currentTime = System.currentTimeMillis();
         exerciseType = ExerciseFragmentArgs.fromBundle(getArguments()).getExerciseType();
 
-        ExerciseViewModel exerciseViewModel = new  ViewModelProvider(this).get(ExerciseViewModel.class);
+        exerciseViewModel = new  ViewModelProvider(this).get(ExerciseViewModel.class);
         exerciseViewModel.setmAllExercises(exerciseType);
         exerciseViewModel.getCurrentExericise().observe(getViewLifecycleOwner(), exercises -> {
             Log.e("imageFile", exercises.getImage());
@@ -108,6 +119,7 @@ public class ExerciseFragment extends Fragment {
 
         exerciseCountdown = new CountDownTimer(31000, 1000) {
             public void onTick(long millisUntilFinished) {
+                exerciseViewModel.increaseExerciseTime(1000);
                 long minute = (millisUntilFinished / 60000) % 60;
                 long second = (millisUntilFinished / 1000)  %  60;
                 progressText.setText(f.format(minute) + ":" + f.format(second));
@@ -181,4 +193,42 @@ public class ExerciseFragment extends Fragment {
         restTime.start();
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull @NotNull Menu menu, @NonNull @NotNull MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_settings:
+                showBottomSheetDialog();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showBottomSheetDialog() {
+
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet);
+        Button finish = bottomSheetDialog.findViewById(R.id.finsishWorkout);
+        finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), ((exerciseViewModel.getExerciseTime() / 1000) / 60) + " minutes " + ((exerciseViewModel.getExerciseTime() / 1000) % 60) + " second" , Toast.LENGTH_SHORT).show();
+                bottomSheetDialog.dismiss();
+            }
+        });
+        Button cancel = bottomSheetDialog.findViewById(R.id.cancelDialog);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "cancel", Toast.LENGTH_SHORT).show();
+                bottomSheetDialog.dismiss();
+            }
+        });
+        bottomSheetDialog.show();
+    }
 }
