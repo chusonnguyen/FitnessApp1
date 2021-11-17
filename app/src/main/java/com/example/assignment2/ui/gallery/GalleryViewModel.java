@@ -1,19 +1,30 @@
 package com.example.assignment2.ui.gallery;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+import com.example.assignment2.database.ExerciseRepository;
+import com.example.assignment2.database.Exercises;
 
-    private MutableLiveData<String> mText;
+import org.jetbrains.annotations.NotNull;
 
-    public GalleryViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+import java.util.List;
+
+public class GalleryViewModel extends AndroidViewModel {
+
+    private ExerciseRepository exerciseRepository;
+    private List<Exercises> mAllExercises;
+
+    public GalleryViewModel(@NonNull @NotNull Application application) {
+        super(application);
+        exerciseRepository = new ExerciseRepository(application);
+        mAllExercises = exerciseRepository.getAll();
     }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
+    public List<Exercises> getmAllExercises() {return mAllExercises;}
 }

@@ -11,11 +11,13 @@ public class ExerciseRepository {
     private ExerciseDAO exerciseDAO;
     private List<Exercises> mAllExercise;
     private List<String> mAllType;
+    private List<Exercises> mAll;
 
     public ExerciseRepository(Application application){
         ExerciseRoomDatabase db = ExerciseRoomDatabase.getDatabase(application);
         exerciseDAO = db.exerciseDAO();
         mAllType = exerciseDAO.getAllTypes();
+        mAll = exerciseDAO.getAll();
     }
 
     public List<Exercises> getmAllExercise(String mType){
@@ -30,4 +32,6 @@ public class ExerciseRepository {
             exerciseDAO.insert(exercises);
         });
     }
+
+    public List<Exercises> getAll() {return mAll;}
 }

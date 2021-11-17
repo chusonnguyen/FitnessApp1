@@ -22,4 +22,7 @@ public interface ExerciseDAO {
 
     @Query("SELECT DISTINCT type FROM exercise_table")
     List<String> getAllTypes();
+
+    @Query("SELECT * FROM exercise_table")
+    List<Exercises> getAll();
 }
